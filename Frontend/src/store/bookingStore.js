@@ -29,5 +29,9 @@ export const useBookingStore = create((set) => ({
   completeBooking: async (id) => {
     await api.put(`/bookings/complete/${id}`);
     toast.success("Completed");
-  }
+  },
+  markReached: async (id) => {
+   await api.put(`/bookings/reached/${id}`);
+}
+
 }));

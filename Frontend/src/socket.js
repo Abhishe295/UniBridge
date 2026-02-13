@@ -1,5 +1,13 @@
 import { io } from "socket.io-client";
 
-export const socket = io("http://localhost:4000", {
-  withCredentials: true
-});
+let socket;
+
+export const getSocket = () => {
+  if (!socket) {
+    socket = io("http://localhost:4000", {
+      withCredentials: true,
+      transports: ["websocket"]
+    });
+  }
+  return socket;
+};

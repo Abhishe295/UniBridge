@@ -26,7 +26,8 @@ const bookingSchema = new mongoose.Schema(
         "accepted",
         "arriving",
         "completed",
-        "cancelled"
+        "cancelled",
+        "reached"
       ],
       default: "waiting"
     },

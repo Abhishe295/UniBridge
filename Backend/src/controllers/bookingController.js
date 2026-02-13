@@ -28,11 +28,12 @@ export const createBooking = async (req, res, next) => {
     });
 
     const io = getIO();
-    io.emit("bookingUpdate", {
-        receiverId: helperId,
-        booking
-    });
 
+    // existing direct emit
+    io.emit("bookingUpdate", {
+      receiverId: helperId,
+      booking
+    });
 
     res.status(201).json({
       success: true,
@@ -43,6 +44,7 @@ export const createBooking = async (req, res, next) => {
     next(error);
   }
 };
+
 
 
 // ================= ACCEPT BOOKING =================
@@ -70,12 +72,15 @@ export const acceptBooking = async (req, res, next) => {
     });
 
     const io = getIO();
+
+    // existing direct emit
     io.emit("bookingUpdate", {
-        receiverId: booking.user.toString(),
-        booking
+      receiverId: booking.user.toString(),
+      booking
     });
 
-
+    // 🔥 NEW: emit to booking room for real-time update
+    io.to(`booking-${booking._id}`).emit("bookingUpdated", booking);
 
     res.status(200).json({
       success: true,
@@ -86,6 +91,7 @@ export const acceptBooking = async (req, res, next) => {
     next(error);
   }
 };
+
 
 
 // ================= COMPLETE BOOKING =================
@@ -98,9 +104,9 @@ export const completeBooking = async (req, res, next) => {
       throw new Error("Booking not found");
     }
 
-    if (booking.status !== "accepted") {
+    if (booking.status !== "reached") {
       res.status(400);
-      throw new Error("Booking not in accepted state");
+      throw new Error("Booking must be marked as reached first");
     }
 
     booking.status = "completed";
@@ -108,17 +114,15 @@ export const completeBooking = async (req, res, next) => {
 
     await booking.save();
 
-    // Dummy earning logic
     await Helper.findByIdAndUpdate(booking.helper, {
       $inc: { earnings: 500 },
       isAvailable: true
     });
 
     const io = getIO();
-    io.emit("bookingUpdate",{
-        receiverId: booking.helper.toString(),
-        booking
-    })
+
+    // 🔥 NEW: emit to booking room
+    io.to(`booking-${booking._id}`).emit("bookingUpdated", booking);
 
     res.status(200).json({
       success: true,
@@ -130,6 +134,70 @@ export const completeBooking = async (req, res, next) => {
   }
 };
 
+
+
+// ================= MARK REACHED =================
+export const markReached = async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      res.status(404);
+      throw new Error("Booking not found");
+    }
+
+    if (booking.status !== "accepted") {
+      res.status(400);
+      throw new Error("Booking must be accepted first");
+    }
+
+    booking.status = "reached";
+    await booking.save();
+
+    const io = getIO();
+
+    // 🔥 NEW: emit to booking room
+    io.to(`booking-${booking._id}`).emit("bookingUpdated", booking);
+
+    res.status(200).json({
+      success: true,
+      booking
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ================= GET BOOKING BY ID =================
+export const getBookingById = async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id)
+      .populate("user", "name")
+      .populate("helper", "name");
+
+    if (!booking) {
+      res.status(404);
+      throw new Error("Booking not found");
+    }
+
+    if (
+      booking.user._id.toString() !== req.user._id.toString() &&
+      booking.helper._id.toString() !== req.user._id.toString()
+    ) {
+      res.status(403);
+      throw new Error("Not authorized");
+    }
+
+    res.status(200).json({
+      success: true,
+      booking
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
 
 // ================= GET USER BOOKINGS =================
 export const getUserBookings = async (req, res, next) => {
@@ -165,3 +233,5 @@ export const getHelperBookings = async (req, res, next) => {
     next(error);
   }
 };
+
+

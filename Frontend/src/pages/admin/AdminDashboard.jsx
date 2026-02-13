@@ -1,15 +1,12 @@
 import { useEffect } from "react";
-import { useAdminStore } from "../store/adminStore";
-import ChatBox from "../components/ChatBox";
+import { useAdminStore } from "../../store/adminStore";
 
-const AdminPage = () => {
+const AdminDashboard = () => {
   const adminStore = useAdminStore();
 
   useEffect(() => {
-    adminStore.fetchUsers();
-    adminStore.fetchHelpers();
-    adminStore.fetchBookings();
     adminStore.fetchStats();
+    adminStore.fetchBookings();
   }, []);
 
   return (
@@ -24,16 +21,14 @@ const AdminPage = () => {
       <div className="border p-4 rounded">
         <div>All Bookings</div>
         {adminStore.bookings.map((b) => (
-          <div key={b._id} className="border p-2 mb-2">
+          <div key={b._id} className="border p-2 mt-2">
             {b.status}
           </div>
         ))}
       </div>
 
-      <ChatBox receiverId="SOME_USER_ID" />
-
     </div>
   );
 };
 
-export default AdminPage;
+export default AdminDashboard;

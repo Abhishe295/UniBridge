@@ -1,5 +1,7 @@
 import { create } from "zustand";
-import { socket } from "../socket";
+import { getSocket } from "../socket";
+
+const socket = getSocket();
 
 export const useChatStore = create((set) => ({
   messages: [],
