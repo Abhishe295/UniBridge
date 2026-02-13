@@ -8,11 +8,16 @@ import {
   Users,
   ClipboardList,
   MessageSquare,
-  ChevronRight
+  ChevronRight,
+  LogOut
 } from "lucide-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 const Sidebar = ({ onNavigate }) => {
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   if (!user) return null;
 
   const linkClass =
@@ -23,6 +28,18 @@ const Sidebar = ({ onNavigate }) => {
   const handleNavClick = () => {
     if (onNavigate) {
       onNavigate();
+    }
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      toast.success("Logged out successfully!");
+    } catch (error) {
+      toast.error("Failed to logout");
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -40,8 +57,8 @@ const Sidebar = ({ onNavigate }) => {
   };
 
   return (
-    <div className="w-64 xl:w-80 h-full bg-base-100 border-r border-base-300 shadow-xl overflow-y-auto">
-      <div className="p-4 sm:p-6 space-y-6">
+    <div className="w-64 xl:w-80 h-full bg-base-100 border-r border-base-300 shadow-xl overflow-y-auto flex flex-col">
+      <div className="p-4 sm:p-6 space-y-6 flex-1">
         {/* HEADER */}
         <div className={`bg-gradient-to-r ${getRoleColor(user.role)} rounded-xl p-4 shadow-lg`}>
           <div className="flex items-center gap-3">
@@ -274,6 +291,25 @@ const Sidebar = ({ onNavigate }) => {
             </NavLink>
           </div>
         )}
+      </div>
+
+      {/* LOGOUT BUTTON - Always at bottom */}
+      <div className="p-4 sm:p-6 border-t border-base-300 bg-base-100">
+        <button
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="flex items-center justify-between gap-3 p-3 rounded-lg w-full text-error hover:bg-error/10 transition-all duration-200 group"
+        >
+          <div className="flex items-center gap-3">
+            <LogOut size={20} />
+            <span className="font-medium">
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </span>
+          </div>
+          {isLoggingOut && (
+            <span className="loading loading-spinner loading-sm"></span>
+          )}
+        </button>
       </div>
     </div>
   );

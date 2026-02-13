@@ -7,19 +7,25 @@ import {
   Calendar,
   ArrowRight,
   Sparkles,
-  TrendingUp
+  TrendingUp,
+  Wrench,
+  Zap,
+  ChefHat,
+  Car,
+  Home,
+  Leaf
 } from "lucide-react";
 import { useBookingStore } from "../../store/bookingStore";
 import { useAuthStore } from "../../store/authStores";
 import toast from "react-hot-toast";
 
 const categories = [
-  { name: "plumbing", icon: "🔧", color: "from-blue-500 to-blue-600" },
-  { name: "electrician", icon: "⚡", color: "from-yellow-500 to-yellow-600" },
-  { name: "cooking", icon: "👨‍🍳", color: "from-orange-500 to-orange-600" },
-  { name: "car cleaning", icon: "🚗", color: "from-purple-500 to-purple-600" },
-  { name: "house cleaning", icon: "🏠", color: "from-green-500 to-green-600" },
-  { name: "gardening", icon: "🌱", color: "from-emerald-500 to-emerald-600" }
+  { name: "plumbing", icon: Wrench },
+  { name: "electrician", icon: Zap },
+  { name: "cooking", icon: ChefHat },
+  { name: "car cleaning", icon: Car },
+  { name: "house cleaning", icon: Home },
+  { name: "gardening", icon: Leaf }
 ];
 
 const UserDashboard = () => {
@@ -48,6 +54,23 @@ const UserDashboard = () => {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fadeIn">
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-5px); }
+        }
+        @keyframes glow {
+          0%, 100% { opacity: 0.2; }
+          50% { opacity: 0.4; }
+        }
+        .service-icon-container {
+          animation: float 2.5s ease-in-out infinite;
+        }
+        .service-icon-glow {
+          animation: glow 2s ease-in-out infinite;
+        }
+      `}</style>
+
       {/* ===== HEADER ===== */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -133,35 +156,45 @@ const UserDashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {categories.map((cat) => (
-            <div
-              key={cat.name}
-              className="card bg-base-100 border border-base-300 shadow-lg hover:shadow-2xl cursor-pointer group transition-all duration-300 hover:-translate-y-1"
-              onClick={() => navigate(`/user/helpers/${cat.name}`)}
-            >
-              <div className="card-body p-4 sm:p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`text-3xl sm:text-4xl p-3 rounded-xl bg-gradient-to-br ${cat.color} bg-opacity-10`}>
-                      {cat.icon}
-                    </div>
-                    <div>
-                      <div className="text-base sm:text-lg font-bold capitalize group-hover:text-primary transition-colors">
-                        {cat.name}
+          {categories.map((cat, index) => {
+            const IconComponent = cat.icon;
+            return (
+              <div
+                key={cat.name}
+                className="card bg-base-100 border border-base-300 shadow-lg hover:shadow-2xl cursor-pointer group transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                onClick={() => navigate(`/user/helpers/${cat.name}`)}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="card-body p-4 sm:p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="service-icon-container relative">
+                        {/* Glow effect background */}
+                        <div className="absolute inset-0 bg-primary opacity-20 blur-lg rounded-xl service-icon-glow group-hover:opacity-30 transition-opacity duration-300" />
+                        
+                        {/* Icon container */}
+                        <div className="relative bg-primary p-3 rounded-xl shadow-md group-hover:shadow-lg transition-shadow duration-300">
+                          <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 text-white stroke-[2.5] relative z-10" />
+                        </div>
                       </div>
-                      <div className="text-xs text-base-content/60">Click to book</div>
+                      <div>
+                        <div className="text-base sm:text-lg font-bold capitalize group-hover:text-primary transition-colors">
+                          {cat.name}
+                        </div>
+                        <div className="text-xs text-base-content/60">Click to book</div>
+                      </div>
                     </div>
+                    <ArrowRight className="w-5 h-5 text-base-content/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </div>
-                  <ArrowRight className="w-5 h-5 text-base-content/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
       {/* ===== BOOKING HISTORY ===== */}
-      <div>
+      {/* <div>
         <div className="flex items-center gap-2 mb-4 sm:mb-6">
           <Calendar className="w-5 h-5 text-primary" />
           <h2 className="text-lg sm:text-xl font-semibold">Recent Bookings</h2>
@@ -227,7 +260,7 @@ const UserDashboard = () => {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

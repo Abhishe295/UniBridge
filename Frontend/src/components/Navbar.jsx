@@ -71,23 +71,15 @@ const Navbar = () => {
           <div className="dropdown dropdown-end">
             <label 
               tabIndex={0} 
-              className="btn btn-ghost gap-2 px-2 sm:px-4 hover:bg-base-200 transition-all duration-200"
+              className="btn btn-ghost btn-circle hover:bg-base-200 transition-all duration-200"
             >
               {/* Avatar with Initial */}
               <div className="avatar placeholder">
-                <div className="bg-primary text-primary-content rounded-full w-8 h-8 sm:w-10 sm:h-10 ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <span className="text-sm sm:text-base font-semibold">
+                <div className="bg-primary text-primary-content rounded-full w-10 h-10 ring ring-primary ring-offset-base-100 ring-offset-2">
+                  <span className="text-base font-semibold">
                     {getInitials(user.name)}
                   </span>
                 </div>
-              </div>
-
-              {/* User Info - Hidden on mobile */}
-              <div className="hidden md:flex flex-col items-start">
-                <span className="text-sm font-semibold">{user.name}</span>
-                <span className={`badge ${getRoleBadgeColor(user.role)} badge-sm`}>
-                  {user.role}
-                </span>
               </div>
             </label>
 
@@ -95,8 +87,8 @@ const Navbar = () => {
               tabIndex={0} 
               className="dropdown-content menu bg-base-100 rounded-box w-64 shadow-xl border border-base-300 mt-3 p-2"
             >
-              {/* User Info in Dropdown - Visible on mobile */}
-              <li className="menu-title px-4 py-2 md:hidden">
+              {/* User Info in Dropdown */}
+              <li className="menu-title px-4 py-2">
                 <div className="flex items-center gap-3">
                   <div className="avatar placeholder">
                     <div className="bg-primary text-primary-content rounded-full w-12 h-12">
@@ -114,7 +106,7 @@ const Navbar = () => {
                 </div>
               </li>
               
-              <div className="divider my-1 md:hidden"></div>
+              <div className="divider my-1"></div>
 
               {/* Logout Option */}
               <li>
