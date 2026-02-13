@@ -1,30 +1,67 @@
 import express from "express";
 import dotenv from "dotenv";
-import { connectDB } from "./config/db.js";
+import cookieParser from "cookie-parser";
 import cors from "cors";
+import http from "http";
+
+import { Server } from "socket.io";
+import { initSocket } from "./socket/socket.js";
+
+import connectDB from "./config/db.js";
+import { errorHandler } from "./middleware/errorMiddleware.js";
+import authRoutes from "./routes/authRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import helperRoutes from "./routes/helperRoutes.js";
+import ratingRoutes from "./routes/ratingRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 dotenv.config();
-const PORT = process.env.PORT || 4000;
-const app = express(); 
+connectDB();
 
-const allowedOrigins = ["http://localhost:5173", process.env.FRONTEND_URL, ]
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // mobile / postman
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error("Not allowed by CORS: " + origin), false);
-  },
-  credentials: true,
-}));
+const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+app.use(cors({
+  origin: "http://localhost:5173", 
+  credentials: true
+}));
+
+app.get("/", (req, res) => {
+  res.send("Helper Booking API Running...");
+});
+app.use("/api/auth",authRoutes);
+app.use("/api/bookings",bookingRoutes);
+app.use("/api/helpers",helperRoutes);
+app.use("/api/ratings",ratingRoutes);
+app.use("/api/admin",adminRoutes);
 
 
-connectDB().then(()=>{
-    app.listen(PORT, ()=>{
-        console.log(`Server running on port ${PORT}`);
-    })
-})
+
+app.use(errorHandler);
+
+const server = http.createServer(app);
+initSocket(server);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    credentials: true
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log("User Connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("User Disconnected:", socket.id);
+  });
+});
+
+
+const PORT = process.env.PORT || 4000;
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
