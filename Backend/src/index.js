@@ -14,6 +14,7 @@ import helperRoutes from "./routes/helperRoutes.js";
 import ratingRoutes from "./routes/ratingRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import supportRoutes from "./routes/supportRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -41,6 +42,7 @@ app.use("/api/helpers", helperRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/support", supportRoutes);
 
 app.use(errorHandler);
 

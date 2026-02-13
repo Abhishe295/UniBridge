@@ -23,8 +23,11 @@ import HelperSupport from "./pages/helper/HelperSupport";
 
 // ADMIN
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminSupport from "./pages/admin/AdminSupport";
 import ThemePage from "./pages/ThemePage";
+import AdminHelpersPage from "./pages/admin/AdminHelpersPage";
+import AdminBookingsPage from "./pages/admin/AdminBookingsPage";
+import AdminSupportPage from "./pages/admin/AdminSupportPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
 
 
 // ================= ROLE BASED HOME REDIRECT =================
@@ -78,7 +81,11 @@ function App() {
 
           {/* ================= ADMIN ROUTES ================= */}
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/support" element={<AdminSupport />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/helpers" element={<AdminHelpersPage />} />
+          <Route path="/admin/bookings" element={<AdminBookingsPage />} />
+          <Route path="/admin/support" element={<AdminSupportPage />} />
+
 
         </Routes>
       </Layout>

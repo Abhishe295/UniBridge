@@ -22,6 +22,37 @@ export const initSocket = (server) => {
       console.log("User Registered:", userId);
     });
 
+    // ===== SUPPORT ROOM JOIN =====
+// ===== SUPPORT ROOM JOIN =====
+socket.on("joinSupportRoom", (userId) => {
+  socket.join(`support-${userId}`);
+});
+
+// ===== SEND SUPPORT MESSAGE =====
+// ===== SEND SUPPORT MESSAGE =====
+socket.on("sendSupportMessage", async ({ userId, senderId, message }) => {
+  try {
+    if (!senderId || !userId || !message) return;
+
+    const newMessage = await Message.create({
+      sender: senderId,
+      receiver: userId,
+      message,
+      type: "support"
+    });
+
+    io.to(`support-${userId}`).emit("receiveSupportMessage", newMessage);
+
+  } catch (error) {
+    console.error("Support message error:", error.message);
+  }
+});
+
+
+
+
+
+
     // ================= DIRECT MESSAGE =================
     socket.on("sendDirectMessage", async ({ senderId, receiverId, message }) => {
       try {
@@ -55,7 +86,8 @@ export const initSocket = (server) => {
         const newMessage = await Message.create({
           booking: bookingId,
           sender: senderId,
-          message
+          message,
+          type: "booking",
         });
 
         const roomName = `booking-${bookingId}`;
