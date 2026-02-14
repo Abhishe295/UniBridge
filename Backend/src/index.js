@@ -22,15 +22,18 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
-initSocket(server); // ONLY THIS
+initSocket(server);
 
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+// Use env variable for frontend URL
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("Helper Booking API Running...");
