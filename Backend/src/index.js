@@ -30,7 +30,7 @@ app.use(cookieParser());
 // Use env variable for frontend URL
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173" || "https://help-x-wheat.vercel.app",
     credentials: true,
   })
 );
