@@ -11,7 +11,8 @@ import {
   Sparkles,
   Award,
   TrendingUp,
-  Zap
+  Zap,
+  IndianRupee
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -58,8 +59,8 @@ const HelperDashboard = () => {
   const stats = [
     {
       label: "Total Earnings",
-      value: isLoading ? null : `$${helperStore.stats?.earnings || 0}`,
-      icon: DollarSign,
+      value: isLoading ? null : `₹${helperStore.stats?.earnings || 0}`,
+      icon: IndianRupee,
       color: "success",
       gradient: "from-success/10 to-success/5",
       border: "border-success/20",
